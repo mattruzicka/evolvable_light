@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'evolvable_light'
+
+# a_pins = ['A0', 'A1', 'A2', 'A3']
+a_pins = ['A0', 'A5']
+# a_pins = ['A0']
+pressure_sensors = a_pins.map { |p| EvolvableLight::PressureSensor.new(p) }
+pressure_sensors.each do |sensor|
+  sensor.sibling_sensors = pressure_sensors.select { |ps| ps != sensor }
+end
+pressure_sensors.each(&:calibrate_pressure_threshold)
+pressure_sensors.each(&:start)
+
+require 'irb'
+IRB.start(__FILE__)

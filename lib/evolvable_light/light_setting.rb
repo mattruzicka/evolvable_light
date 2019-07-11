@@ -1,6 +1,6 @@
 class EvolvableLight::LightSetting
   def delay_time
-    @rand_time ||= rand(0..0.3)
+    @rand_time ||= rand(0.0..3.0)
   end
 
   def position

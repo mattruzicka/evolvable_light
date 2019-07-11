@@ -5,6 +5,18 @@ require 'evolvable'
 require 'dino'
 require 'byebug'
 
+# Add Dino::Components::Sensor#reset
+module Dino
+  module Components
+    class Sensor < BaseComponent
+      def reset
+        @data_callbacks = []
+        @value = 0
+      end
+    end
+  end
+end
+
 class EvolvableLight
   include Evolvable
 
@@ -26,11 +38,9 @@ class EvolvableLight
   end
 
   def self.evolvable_before_evaluation(population)
-    puts "\n Population #{population.generation_count}"
+    puts "\n#{population.name} | Generation #{population.generation_count}"
     population.objects.each do |object|
       puts object.genes.map(&:on_or_off).inspect
-      puts object.on_at
-      puts object.off_at
       puts object.fitness
     end
   end
@@ -44,15 +54,25 @@ class EvolvableLight
 
   def turn_on
     self.on_at = Time.now.utc
-
-    @genes.sort_by(&:position).each_with_index do |light_setting_gene, index|
-      sleep light_setting_gene.delay_time
-      LIGHTS[index].send(light_setting_gene.on_or_off)
+    kill_turn_on_threads
+    Thread.new do
+      Thread.current[:type] = :turn_on
+      @genes.sort_by(&:position).each_with_index do |light_setting_gene, index|
+        sleep light_setting_gene.delay_time
+        LIGHTS[index].send(light_setting_gene.on_or_off)
+      end
     end
   end
 
   def turn_off
     self.off_at = Time.now.utc
+    kill_turn_on_threads
     LIGHTS.each(&:off)
+  end
+
+  private
+
+  def kill_turn_on_threads
+    Thread.list.each { |t| t.kill if t[:type] == :turn_on }
   end
 end

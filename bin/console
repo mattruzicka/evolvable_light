@@ -1,31 +1,17 @@
 #!/usr/bin/env ruby
 
-require "bundler/setup"
-require "evolvable_light"
+require 'bundler/setup'
+require 'evolvable_light'
 
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different console, if you like.
+# a_pins = ['A0', 'A1', 'A2', 'A3']
+# a_pins = ['A0', 'A1']
+# a_pins = ['A0']
+# pressure_sensors = a_pins.map { |p| EvolvableLight::PressureSensor.new(p) }
+# pressure_sensors.each do |sensor|
+#   sensor.sibling_sensors = pressure_sensors.select { |ps| ps != sensor }
+# end
+# pressure_sensors.each(&:calibrate_pressure_threshold)
+# pressure_sensors.each(&:start)
 
-# (If you use this, don't forget to add pry to your Gemfile!)
-# require "pry"
-# Pry.start
-
-
-# sensor_a0 = EvolvableLight::PressureSensor.new('A0')
-
-a_pins = ['A0', 'A1', 'A2', 'A3', 'A4', 'A5']
-pressure_sensors = a_pins.map { |p| EvolvableLight::PressureSensor.new(p) }
-pressure_sensors.each do |sensor|
-  sensor.sibling_sensors = pressure_sensors.select { |ps| ps != sensor }
-end
-
-pressure_sensors.first(2).each(&:listen)
-
-
-
-require "irb"
+require 'irb'
 IRB.start(__FILE__)
-
-
-
-# sensor_a1 = PressureSensor.new('A1')
