@@ -1,7 +1,20 @@
+# Add Dino::Components::Sensor#reset
+module Dino
+  module Components
+    class Sensor < BaseComponent
+      def reset
+        @data_callbacks = []
+        @value = 0
+      end
+    end
+  end
+end
+
 class EvolvableLight::PressureSensor
   def initialize(pin, pressure_threshold = 195)
     @pin = pin
-    @dino_sensor = Dino::Components::Sensor.new(pin: pin, board: EvolvableLight::BOARD)
+    board = EvolvableLight::ArduinoUno.board
+    @dino_sensor = Dino::Components::Sensor.new(pin: pin, board: board)
     @passed_threshold_count = 0
     @pressure_threshold = pressure_threshold
   end
@@ -23,7 +36,7 @@ class EvolvableLight::PressureSensor
   end
 
   def above_threshold_callback
-    # puts "Above #{pin}"
+    puts "Above #{pin}"
     @object_index = @passed_threshold_count % population_size
     @evolvable_light = light_population.objects[@object_index]
     @evolvable_light.turn_on
@@ -33,7 +46,7 @@ class EvolvableLight::PressureSensor
   end
 
   def below_threshold_callback
-    # puts "Below #{pin}"
+    puts "Below #{pin}"
     max_on_sibling = sibling_sensors.select(&:on_at).max_by(&:on_at)
     if max_on_sibling
       max_on_sibling.evolvable_light.turn_on if max_on_sibling.on_at <= on_at
@@ -41,7 +54,6 @@ class EvolvableLight::PressureSensor
       @evolvable_light.turn_off
     end
     @evolvable_light.off_at = Time.now.utc
-    # puts @evolvable_light.fitness
     self.on_at = nil
     light_population.evolve! if @object_index == population_size - 1
   end
@@ -49,7 +61,7 @@ class EvolvableLight::PressureSensor
   def start
     dino_sensor.when_data_received do |pressure|
       pressure = pressure.to_i
-      # puts "#{pin} #{pressure}" if pin == 'A3'
+      puts "#{pin} #{pressure}" if pin == 'A2'
       if on_at.nil? && pressure >= pressure_threshold
         above_threshold_callback
       elsif on_at && pressure < pressure_threshold
@@ -61,7 +73,7 @@ class EvolvableLight::PressureSensor
   INTERFERENCE_BUFFER = 75
 
   def calibrate_pressure_threshold(seconds = 1)
-    # puts "Calibrating #{pin}..."
+    puts "Calibrating #{pin}..."
     calibration_readings = []
     dino_sensor.when_data_received do |pressure|
       calibration_readings << pressure.to_i
@@ -71,7 +83,7 @@ class EvolvableLight::PressureSensor
     median = find_median(calibration_readings)
     max = calibration_readings.max
     self.pressure_threshold = ((median + max) / 2) + INTERFERENCE_BUFFER
-    # puts "Median: #{median}, Max: #{max}, Threshold: #{pressure_threshold}"
+    puts "Median: #{median}, Max: #{max}, Threshold: #{pressure_threshold}"
   end
 
   def find_median(array)

@@ -3,13 +3,11 @@
 require 'bundler/setup'
 require 'evolvable_light'
 
-a_pins = ['A0', 'A1', 'A2', 'A3']
-pressure_sensors = a_pins.map { |p| EvolvableLight::PressureSensor.new(p) }
-pressure_sensors.each do |sensor|
-  sensor.sibling_sensors = pressure_sensors.select { |ps| ps != sensor }
-end
-pressure_sensors.each(&:calibrate_pressure_threshold)
-pressure_sensors.each(&:start)
+uno = EvolvableLight::ArduinoUno
+uno.pressure_sensors = ['A0', 'A1', 'A2', 'A3']
+uno.lights = [2, 3, 4, 5, 6, 7]
+uno.calibrate_pressure_thresholds
+uno.start
 
 require 'irb'
 IRB.start(__FILE__)
