@@ -1,6 +1,6 @@
 require 'evolvable_light/version'
 require 'evolvable_light/pressure_sensor'
-require 'evolvable_light/light_setting'
+require 'evolvable_light/light_gene'
 require 'evolvable'
 require 'dino'
 require 'byebug'
@@ -30,7 +30,7 @@ class EvolvableLight
             Dino::Components::Led.new(pin: 7, board: BOARD)]
 
   def self.evolvable_gene_pool
-    [[LightSetting, LIGHTS.count]]
+    [[LightGene, LIGHTS.count]]
   end
 
   def self.evolvable_genes_count
@@ -38,11 +38,11 @@ class EvolvableLight
   end
 
   def self.evolvable_before_evaluation(population)
-    puts "\n#{population.name} | Generation #{population.generation_count}"
-    population.objects.each do |object|
-      puts object.genes.map(&:on_or_off).inspect
-      puts object.fitness
-    end
+    # TODO: log population info to file
+    # puts "\n#{population.name} | Generation #{population.generation_count}"
+    # population.objects.each do |object|
+    # puts object.fitness
+    # end
   end
 
   attr_accessor :on_at,
@@ -53,21 +53,25 @@ class EvolvableLight
   end
 
   def turn_on
-    self.on_at = Time.now.utc
     kill_turn_on_threads
     Thread.new do
       Thread.current[:type] = :turn_on
-      @genes.sort_by(&:position).each_with_index do |light_setting_gene, index|
-        sleep light_setting_gene.delay_time
-        LIGHTS[index].send(light_setting_gene.on_or_off)
+      EvolvableLight::LightGene.assign_lights(LIGHTS, @genes)
+      @genes.each do |light_gene|
+        sleep light_gene.delay_time
+        light_gene.update_light
       end
     end
   end
 
+  OFF_DELAY = 0.05
+
   def turn_off
-    self.off_at = Time.now.utc
     kill_turn_on_threads
-    LIGHTS.each(&:off)
+    genes.reverse_each do |light_gene|
+      sleep OFF_DELAY if light_gene.on?
+      light_gene.turn_off_light
+    end
   end
 
   private
