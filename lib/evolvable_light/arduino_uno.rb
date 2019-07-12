@@ -14,8 +14,19 @@ class EvolvableLight::ArduinoUno
       @lights
     end
 
+    def sound_files
+      @sound_files
+    end
+
+    def sound_files=(sound_files)
+      @sound_files = sound_files
+    end
+
     def pressure_sensors=(analog_pins)
-      sensors = analog_pins.map { |p| EvolvableLight::PressureSensor.new(p) }
+      sensors = analog_pins.map.with_index do |p, i|
+        sound_file = sound_files[i] if sound_files
+        EvolvableLight::PressureSensor.new(p, sound_file)
+      end
       sensors.each do |sensor|
         sensor.sibling_sensors = sensors.select { |ps| ps != sensor }
       end

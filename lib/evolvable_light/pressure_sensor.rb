@@ -11,8 +11,9 @@ module Dino
 end
 
 class EvolvableLight::PressureSensor
-  def initialize(pin, pressure_threshold = 195)
+  def initialize(pin, sound_file = nil, pressure_threshold = 195)
     @pin = pin
+    @sound_file = sound_file
     board = EvolvableLight::ArduinoUno.board
     @dino_sensor = Dino::Components::Sensor.new(pin: pin, board: board)
     @passed_threshold_count = 0
@@ -37,6 +38,7 @@ class EvolvableLight::PressureSensor
 
   def above_threshold_callback
     puts "Above #{pin}"
+    play_sound_file
     @object_index = @passed_threshold_count % population_size
     @evolvable_light = light_population.objects[@object_index]
     @evolvable_light.turn_on
@@ -61,7 +63,7 @@ class EvolvableLight::PressureSensor
   def start
     dino_sensor.when_data_received do |pressure|
       pressure = pressure.to_i
-      puts "#{pin} #{pressure}" if pin == 'A2'
+      # puts "#{pin} #{pressure}" if pin == 'A2'
       if on_at.nil? && pressure >= pressure_threshold
         above_threshold_callback
       elsif on_at && pressure < pressure_threshold
@@ -90,6 +92,18 @@ class EvolvableLight::PressureSensor
     sorted = array.sort
     len = sorted.length
     (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
+  end
+
+  def play_sound_file
+    return unless @sound_file
+
+    Thread.new do
+      if RUBY_PLATFORM == 'x86_64-darwin18'
+        system("afplay #{@sound_file}")
+      else
+        system("omxplayer --no-keys -o local #{@sound_file} &")
+      end
+    end
   end
 
   private
