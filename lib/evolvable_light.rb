@@ -17,6 +17,14 @@ class EvolvableLight
     ArduinoUno.lights.count
   end
 
+  def self.evolvable_initialize(genes, population, object_index)
+    evolvable_light = new
+    evolvable_light.genes = genes
+    evolvable_light.population = population
+    evolvable_light.object_index = object_index
+    evolvable_light
+  end
+
   def self.evolvable_before_evaluation(population)
     # TODO: log population info to file
     # puts "\n#{population.name} | Generation #{population.generation_count}"
@@ -26,7 +34,8 @@ class EvolvableLight
   end
 
   attr_accessor :on_at,
-                :off_at
+                :off_at,
+                :object_index
 
   def fitness
     @fitness ||= off_at - on_at

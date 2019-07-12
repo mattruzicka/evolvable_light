@@ -38,9 +38,9 @@ class EvolvableLight::PressureSensor
 
   def above_threshold_callback
     puts "Above #{pin}"
-    play_sound_file
     @object_index = @passed_threshold_count % population_size
     @evolvable_light = light_population.objects[@object_index]
+    play_sound_file if play_sound_file?(@evolvable_light)
     @evolvable_light.turn_on
     @evolvable_light.on_at = Time.now.utc
     self.on_at = Time.now.utc
@@ -92,6 +92,10 @@ class EvolvableLight::PressureSensor
     sorted = array.sort
     len = sorted.length
     (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
+  end
+
+  def play_sound_file?(evolvable_light)
+    evolvable_light.object_index.zero?
   end
 
   def play_sound_file
