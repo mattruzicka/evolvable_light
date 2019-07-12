@@ -11,7 +11,7 @@ class EvolvableLight::ArduinoUno
     end
 
     def lights
-      @lights
+      @lights ||= []
     end
 
     def sound_files

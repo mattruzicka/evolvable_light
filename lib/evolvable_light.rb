@@ -26,11 +26,15 @@ class EvolvableLight
   end
 
   def self.evolvable_before_evaluation(population)
-    # TODO: log population info to file
-    # puts "\n#{population.name} | Generation #{population.generation_count}"
-    # population.objects.each do |object|
-    # puts object.fitness
-    # end
+    open('./lib/evolvable_log.csv', 'a') do |f|
+      population_log_attrs = "#{population.name}, #{population.generation_count}"
+      log_lines = population.objects.map do |object|
+        gene_log_attrs = object.genes.map(&:log_attrs).join(', ')
+        "#{population_log_attrs}, #{object.on_at}, #{object.off_at}, " \
+        "#{object.fitness}, #{gene_log_attrs}"
+      end
+      f << "#{log_lines.join("\n")}\n"
+    end
   end
 
   attr_accessor :on_at,

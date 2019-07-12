@@ -29,6 +29,11 @@ class EvolvableLight::LightGene
     on_or_off == :on
   end
 
+  def log_attrs
+    light_pin = light.pin if light
+    "#{light_pin}, #{on?}, #{delay_time}, #{position}"
+  end
+
   # Test lights
 
   # def delay_time
