@@ -105,7 +105,7 @@ class EvolvableLight::PressureSensor
       if RUBY_PLATFORM == 'x86_64-darwin18'
         system("afplay #{@sound_file}")
       else
-        system("omxplayer --no-keys -o local #{@sound_file} &")
+        system("omxplayer --no-keys -o local --vol 750 #{@sound_file} &")
       end
     end
   end
