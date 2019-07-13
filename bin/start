@@ -10,7 +10,7 @@ sound_files = ['./lib/evolvable_light/sounds/sensor_sound_1.wav',
                './lib/evolvable_light/sounds/sensor_sound_3.wav',
                './lib/evolvable_light/sounds/sensor_sound_4.wav']
 @uno.sound_files = sound_files
-@uno.pressure_sensors = ['A0', 'A1', 'A2', 'A3']
+@uno.pressure_sensors = ['A1', 'A2', 'A3']
 @uno.lights = [2, 3, 4, 5, 6, 7, 8, 9]
 @uno.calibrate_pressure_thresholds
 @uno.start
