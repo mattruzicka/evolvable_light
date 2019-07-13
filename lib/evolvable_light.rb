@@ -4,7 +4,6 @@ require 'evolvable_light/pressure_sensor'
 require 'evolvable_light/arduino_uno'
 require 'evolvable_light/light_gene'
 require 'evolvable'
-require 'byebug'
 
 class EvolvableLight
   include Evolvable
