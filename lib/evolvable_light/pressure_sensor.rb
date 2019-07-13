@@ -73,7 +73,7 @@ class EvolvableLight::PressureSensor
     end
   end
 
-  INTERFERENCE_BUFFER = 75
+  INTERFERENCE_BUFFER = 50
 
   def calibrate_pressure_threshold(seconds = 1)
     puts "Calibrating #{pin}..."
