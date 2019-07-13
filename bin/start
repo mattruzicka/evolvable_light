@@ -3,17 +3,23 @@
 require 'bundler/setup'
 require 'evolvable_light'
 
-uno = EvolvableLight::ArduinoUno
+@uno = EvolvableLight::ArduinoUno
 
 sound_files = ['./lib/evolvable_light/sounds/sensor_sound_1.wav',
                './lib/evolvable_light/sounds/sensor_sound_2.wav',
                './lib/evolvable_light/sounds/sensor_sound_3.wav',
                './lib/evolvable_light/sounds/sensor_sound_4.wav']
-uno.sound_files = sound_files
-uno.pressure_sensors = ['A0', 'A1', 'A2', 'A3']
-uno.lights = [2, 3, 4, 5, 6, 7, 8, 9]
-uno.calibrate_pressure_thresholds
-uno.start
+@uno.sound_files = sound_files
+@uno.pressure_sensors = ['A0', 'A1', 'A2', 'A3']
+@uno.lights = [2, 3, 4, 5, 6, 7, 8, 9]
+@uno.calibrate_pressure_thresholds
+@uno.start
+
+# Testing
+# evolvable_light = @uno.pressure_sensors.first.light_population.objects.first
+# evolvable_light.turn_on
+# evolvable_light.turn_off
+
 
 require 'irb'
 IRB.start(__FILE__)
