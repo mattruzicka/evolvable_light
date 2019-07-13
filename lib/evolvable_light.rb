@@ -50,8 +50,8 @@ class EvolvableLight
       Thread.current[:type] = :turn_on
       LightGene.assign_lights(ArduinoUno.lights, @genes)
       @genes.each do |light_gene|
-        sleep light_gene.delay_time
         light_gene.update_light
+        sleep light_gene.delay_time if light_gene.on?
       end
     end
   end
