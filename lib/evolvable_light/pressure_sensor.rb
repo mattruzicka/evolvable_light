@@ -38,6 +38,7 @@ class EvolvableLight::PressureSensor
 
   def above_threshold_callback
     puts "Above #{pin}"
+    # Thread.new { system("say #{pin}") }
     @object_index = @passed_threshold_count % population_size
     @evolvable_light = light_population.objects[@object_index]
     play_sound_file if play_sound_file?(@evolvable_light)
